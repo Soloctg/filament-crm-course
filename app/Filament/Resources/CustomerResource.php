@@ -32,29 +32,34 @@ class CustomerResource extends Resource
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone_number')
-                    ->tel()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->maxLength(65535)
                     ->columnSpanFull(),
                 Forms\Components\Select::make('lead_source_id')
                     ->relationship('leadSource', 'name'),
+                Forms\Components\Select::make('tags')
+                    ->relationship('tags', 'name')
+                    ->multiple(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            //->modifyQueryUsing(function ($query) {
+            ->modifyQueryUsing(function ($query) {
                 // Here we are eager loading our tags to prevent N+1 issue
-             //   return $query->with('tags');
-            //})
+                return $query->with('tags');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Name')
                     ->formatStateUsing(function ($record) {
-                        return $record->first_name . ' ' . $record->last_name;
+                        $tagsList = view('customer.tagsList', ['tags' => $record->tags])->render();
+
+                        return $record->first_name . ' ' . $record->last_name . ' ' . $tagsList;
                     })
+                    ->html()
                     ->searchable(['first_name', 'last_name']),
 
                 Tables\Columns\TextColumn::make('email')

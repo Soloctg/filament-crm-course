@@ -22,8 +22,15 @@ class Customer extends Model
         'email',
         'phone_number',
         'description',
-        'lead_source_id'
+        'lead_source_id',
+        'pipeline_stage_id'
     ];
+
+    //customer belongsto Pipeline
+    public function pipelineStage(): BelongsTo
+    {
+        return $this->belongsTo(PipelineStage::class);
+    }
 
     public function leadSource(): BelongsTo
     {

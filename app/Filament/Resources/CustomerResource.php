@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Filament\Resources\LeadSource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -36,12 +37,18 @@ class CustomerResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Select::make('lead_source_id')
+                    ->relationship('leadSource', 'name'),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            //->modifyQueryUsing(function ($query) {
+                // Here we are eager loading our tags to prevent N+1 issue
+             //   return $query->with('tags');
+            //})
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Name')
@@ -49,11 +56,12 @@ class CustomerResource extends Resource
                         return $record->first_name . ' ' . $record->last_name;
                     })
                     ->searchable(['first_name', 'last_name']),
-                
+
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone_number')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('leadSource.name'),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

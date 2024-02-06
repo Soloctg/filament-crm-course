@@ -64,18 +64,18 @@ protected static ?string $navigationGroup = 'Settings';
                 Tables\Actions\Action::make('Set Default')
                     ->icon('heroicon-o-star')
                     ->hidden(fn($record) => $record->is_default)
-        ->requiresConfirmation(function (Tables\Actions\Action $action, $record) {
-            $action->modalDescription('Are you sure you want to set this as the default pipeline stage?');
-            $action->modalHeading('Set "' . $record->name . '" as Default');
+                ->requiresConfirmation(function (Tables\Actions\Action $action, $record) {
+                    $action->modalDescription('Are you sure you want to set this as the default pipeline stage?');
+                    $action->modalHeading('Set "' . $record->name . '" as Default');
 
-            return $action;
-        })
-        ->action(function (PipelineStage $record) {
-            PipelineStage::where('is_default', true)->update(['is_default' => false]);
+                    return $action;
+                })
+                ->action(function (PipelineStage $record) {
+                    PipelineStage::where('is_default', true)->update(['is_default' => false]);
 
-            $record->is_default = true;
-            $record->save();
-        }),
+                    $record->is_default = true;
+                    $record->save();
+                }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->action(function ($data, $record) {

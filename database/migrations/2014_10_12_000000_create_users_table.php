@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +22,17 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+
+        
+
+
+        //Next on our list is a requirement for admins to assign
+        // employees to customers. This will allow an admin to see which employee is responsible
+        // for which customer:
+        //Schema::table('customers', function (Blueprint $table) {
+        //    $table->foreignIdFor(User::class, 'employee_id')->nullable()->constrained('users');
+        //});
     }
 
     /**

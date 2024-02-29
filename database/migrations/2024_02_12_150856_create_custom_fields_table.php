@@ -1,8 +1,7 @@
 <?php
 
 use App\Models\Customer;
-use App\Models\PipelineStage;
-use App\Models\User;
+use App\Models\CustomField;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,15 +13,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_pipeline_stages', function (Blueprint $table) {
+        Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Customer::class)->constrained();
-            $table->foreignIdFor(PipelineStage::class)->nullable()->constrained();
-            $table->foreignIdFor(User::class)->nullable()->constrained();
-            $table->text('notes')->nullable();
+            $table->string('name');
             $table->timestamps();
         });
-        
+
+        Schema::create('custom_field_customer', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Customer::class)->constrained();
+            $table->foreignIdFor(CustomField::class)->constrained();
+            $table->string('value');
+            $table->timestamps();
+        });
+
         
     }
 
@@ -31,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_pipeline_stages');
+        Schema::dropIfExists('custom_fields');
     }
 };

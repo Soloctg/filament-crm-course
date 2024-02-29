@@ -30,6 +30,14 @@ class ListCustomers extends ListRecords
             // We will add a badge to show how many customers are in this tab
             ->badge(Customer::count());
 
+        if (!auth()->user()->isAdmin()) {
+            $tabs['my'] = Tab::make('My Customers')
+                ->badge(Customer::where('employee_id', auth()->id())->count())
+                ->modifyQueryUsing(function ($query) {
+                    return $query->where('employee_id', auth()->id());
+                });
+        }
+
         // Load all Pipeline Stages
         $pipelineStages = PipelineStage::orderBy('position')->withCount('customers')->get();
 
@@ -48,6 +56,12 @@ class ListCustomers extends ListRecords
                     return $query->where('pipeline_stage_id', $pipelineStage->id);
                 });
         }
+
+        $tabs['archived'] = Tab::make('Archived')
+            ->badge(Customer::onlyTrashed()->count())
+            ->modifyQueryUsing(function ($query) {
+                return $query->onlyTrashed();
+            });
 
         return $tabs;
     }

@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Customer;
+use App\Models\CustomField;
 use App\Models\PipelineStage;
+use App\Models\Role;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -21,7 +23,13 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test Admin',
             'email' => 'admin@admin.com',
+            //'role_id' => Role::where('name', 'Admin')->first()->id, 
         ]);
+
+        // We will seed 10 employees
+        //User::factory()->count(10)->create([
+        //    'role_id' => Role::where('name', 'Employee')->first()->id,
+        //]);
 
 
         //10 Customers
@@ -88,5 +96,28 @@ class DatabaseSeeder extends Seeder
         Customer::factory()->count(10)->create([
             'pipeline_stage_id' => $defaultPipelineStage,
         ]);
+
+        //
+        $customFields = [
+            'Birth Date',
+            'Company',
+            'Job Title',
+            'Family Members',
+        ];
+
+        foreach ($customFields as $customField) {
+            CustomField::create(['name' => $customField]);
+        }
+
+
+        //Roles Creation
+        $roles = [
+            'Admin',
+            'Employee'
+        ];
+
+        foreach ($roles as $role) {
+            Role::create(['name' => $role]);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers;
+use App\Filament\Resources\QuoteResource\Pages\CreateQuote;
 use App\Models\Customer;
 use App\Models\CustomField;
 use App\Models\PipelineStage;
@@ -45,31 +46,7 @@ class CustomerResource extends Resource
                     ])
                     ->hidden(!auth()->user()->isAdmin()),
 
-                //Forms\Components\TextInput::make('first_name')
-                //    ->maxLength(255),
-                //Forms\Components\TextInput::make('last_name')
-                //    ->maxLength(255),
-                //Forms\Components\TextInput::make('email')
-                 //   ->email()
-                 //   ->maxLength(255),
-                //Forms\Components\TextInput::make('phone_number')
-                 //   ->maxLength(255),
-                //Forms\Components\Textarea::make('description')
-                //    ->maxLength(65535)
-                //    ->columnSpanFull(),
-                //Forms\Components\Select::make('lead_source_id')
-                 //   ->relationship('leadSource', 'name'),
-                //Forms\Components\Select::make('tags')
-                //    ->relationship('tags', 'name')
-                 //   ->multiple(),
 
-                //Forms\Components\Select::make('pipeline_stage_id')
-                //    ->relationship('pipelineStage', 'name', function ($query) {
-                        // It is important to order by position to display the correct order
-                 //       $query->orderBy('position', 'asc');
-                //    })
-                    // We are setting the default value to the default Pipeline Stage
-                  //  ->default(PipelineStage::where('is_default', true)->first()?->id),
 
                 Forms\Components\Section::make('Customer Details')
                     ->schema([
@@ -259,6 +236,17 @@ class CustomerResource extends Resource
                         ->success()
                         ->send();
                 }),
+
+
+                // add action group drop down create quote
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('Create Quote')
+                        ->icon('heroicon-m-book-open')
+                        ->url(function ($record) {
+                            return CreateQuote::getUrl(['customer_id' => $record->id]);
+                        })
+                ])
+
             ])
 
                 ->recordUrl(function ($record) {
@@ -382,17 +370,17 @@ class CustomerResource extends Resource
                 Tabs\Tab::make('Incomplete')
                     ->badge(fn($record) => $record->incompleteTasks->count())
                     ->schema([
-        RepeatableEntry::make('incompleteTasks')
-            ->hiddenLabel()
-            ->schema([
-                TextEntry::make('description')
-                    ->html()
-                    ->columnSpanFull(),
-                TextEntry::make('employee.name')
-                    ->hidden(fn($state) => is_null($state)),
-        TextEntry::make('due_date')
-            ->hidden(fn($state) => is_null($state))
-        ->date(),
+                        RepeatableEntry::make('incompleteTasks')
+                            ->hiddenLabel()
+                            ->schema([
+                                TextEntry::make('description')
+                                    ->html()
+                                    ->columnSpanFull(),
+                                TextEntry::make('employee.name')
+                                    ->hidden(fn($state) => is_null($state)),
+                        TextEntry::make('due_date')
+                            ->hidden(fn($state) => is_null($state))
+                        ->date(),
                                 TextEntry::make('is_completed')
                                     ->formatStateUsing(function ($state) {
                                         return $state ? 'Yes' : 'No';
